@@ -1,4 +1,4 @@
-from aocd import get_data, submit1
+from aocd import get_data
 
 # data = get_data(day=1, year=2018)
 # data = data.split('\n')
