@@ -2,9 +2,6 @@ from aocd import get_data
 import time
 import os
 
-os.environ["AOC_SESSION"] = \
-    "53616c7465645f5f2ffc2f3199d9f48731bdd78867a87322ffe86cbe91720cc4c87f92d27c22fa72d1ac91319850fa5b"
-
 current_date = int(time.strftime('%d'))
 current_year = time.strftime('%Y')
 file_name = 'data_day_{}.txt'.format(current_date)
