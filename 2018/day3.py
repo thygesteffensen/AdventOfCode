@@ -7,46 +7,33 @@ data = data.split('\n')
 
 
 def part1():
-    number_of_overlaps = 0
-    rows = 1100
-    columns = 1100
-    matrix = numpy.zeros((columns, rows))
-    matrix[0, 0] = 1
+    size = 1000
+    matrix = numpy.zeros((size, size))
     for data_set in data:
-        dict_coor = get_coordinates(data_set)
-        dict_size = get_size(data_set)
-
-        # already_counted_for = False
-        for x in range(int(dict_size[0])):
-            for y in range(int(dict_size[1])):
-                # if matrix[int(dict_coor[0]) + int(x), int(dict_coor[1]) + int(y)] > 1.0 and not already_counted_for:
-                if matrix[int(dict_coor[0]) + int(x) + 1, int(dict_coor[1]) + int(y) + 1] > 1.0:
-                    # already_counted_for = True
-                    number_of_overlaps += 1
-                matrix[int(dict_coor[0]) + int(x) + 1, int(dict_coor[1]) + int(y) + 1] += 1
-
-    return number_of_overlaps
-
-
-def get_coordinates(data_set):
-    data_set = data_set.split('@')[1]
-    data_set = data_set.split(':')[0]
-    data_set = data_set.lstrip()
-    data_set = data_set.split(',')
-    return data_set
-
-
-def get_size(data_set):
-    data_set = data_set.split(':')[1]
-    data_set = data_set.lstrip()
-    data_set = data_set.split('x')
-    return data_set
+        id, x, y, width, height = parse_input(data_set)
+        matrix[x:x + width, y:y + height] += 1
+    return numpy.size(numpy.where(matrix >= 2)[0])
 
 
 def part2():
-    return None
+    size = 1000
+    matrix = numpy.zeros((size, size))
+    for data_set in data:
+        id, x, y, width, height = parse_input(data_set)
+        matrix[x:x + width, y:y + height] += 1
+    for data_set in data:
+        id, x, y, width, height = parse_input(data_set)
+        if numpy.all(matrix[x:x + width, y:y + height] == 1):
+            return id
 
-# Real result 1 : 120408
+
+def parse_input(data_set):
+    id, _, coordinates, size = data_set.split(' ')
+    x, y = map(int, coordinates[:-1].split(','))
+    width, height = map(int, size.split('x'))
+    return id, x, y, width, height
+
+
 # Main part
 start_time_1 = time.time()
 result_1 = part1()
