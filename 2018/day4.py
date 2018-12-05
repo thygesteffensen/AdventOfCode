@@ -16,6 +16,8 @@ def part1():
 
     # Sort data according to date
     guard_list = sorted(guard_list, key=lambda k: k['date'])
+    for guard in guard_list:
+        print(guard)
 
     # Calculate the guard with most sleeping minutes
     current_guard_id = None
@@ -30,21 +32,22 @@ def part1():
             continue
 
         if fall_time is None:
-            fall_time = guard.get('date').time()
+            fall_time = guard.get('date').minute
             wake_time = None
             continue
 
         if wake_time is None:
-            wake_time = guard.get('date').time()
-            guard_list_sleep[current_guard_id] += wake_time-fall_time
+            wake_time = guard.get('date').minute
+
+            delta_time = wake_time - fall_time -1
+            guard_list_sleep[current_guard_id] += delta_time
 
             wake_time = None
             fall_time = None
 
-    for guard in guard_list_sleep:
-        print(guard)
+    (guard, time) = max(guard_list_sleep.items(), key=lambda i: i[1])
 
-    return None
+    return 'guard: {} and sleep: {}. Result: {}'.format(guard, time, int(time)*int(guard))
 
 
 def part2():
