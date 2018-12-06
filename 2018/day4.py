@@ -3,6 +3,8 @@ import datetime
 
 from aocd import get_data
 import time
+import datetime
+import collections
 
 # data = get_data(day=4, year=2018)
 
@@ -74,6 +76,48 @@ def get_guard_id(data_set):
     data_set = data_set.split(' ')
     return True, data_set[3][1:]
 
+    # dict = Date, id, total sleep time
+    guard_list = []
+    for data_set in data:
+        date, guard_id, action = parse_data(data_set)
+        guard_list.append({'date': date, 'guard_id': guard_id, 'action': action})
+
+    # Sort data according to date
+    guard_list = sorted(guard_list, key=lambda k: k['date'])
+    for guard in guard_list:
+        print(guard)
+
+    # Calculate the guard with most sleeping minutes
+    current_guard_id = None
+    fall_time = None
+    wake_time = None
+
+    guard_list_sleep = collections.defaultdict(int)
+
+    for guard in guard_list:
+        if guard.get('guard_id') is not None:
+            current_guard_id = guard.get('guard_id')
+            continue
+
+        if fall_time is None:
+            fall_time = guard.get('date').minute
+            wake_time = None
+            continue
+
+        if wake_time is None:
+            wake_time = guard.get('date').minute
+
+            delta_time = wake_time - fall_time -1
+            guard_list_sleep[current_guard_id] += delta_time
+
+            wake_time = None
+            fall_time = None
+
+    (guard, time) = max(guard_list_sleep.items(), key=lambda i: i[1])
+
+    return 'guard: {} and sleep: {}. Result: {}'.format(guard, time, int(time)*int(guard))
+
+
 
 def part2():
     time_list = sorted(data)
@@ -115,6 +159,22 @@ def part2():
 
 
     return None
+
+
+def parse_data(data_set):
+    date, time, additional = data_set.split(' ', maxsplit=2)
+    date = '{}_{}'.format(date[1:], time[:-1])
+    date = datetime.datetime.strptime(date, "%Y-%m-%d_%H:%M")
+
+    additional = additional.split(' ')
+    if len(additional) > 2:
+        guard_id = additional[1][1:]
+        action = additional[2]
+    else:
+        guard_id = None
+        action = additional[0]
+
+    return date, guard_id, action
 
 
 # Main part
