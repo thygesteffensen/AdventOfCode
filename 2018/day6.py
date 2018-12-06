@@ -3,7 +3,7 @@ from collections import defaultdict
 from aocd import get_data
 import time
 
-data = get_data(day=2, year=2018)
+# data = get_data(day=6, year=2018)
 
 data = '''1, 1
 1, 6
@@ -17,11 +17,13 @@ data = data.split('\n')
 
 def part1():
     # Added all coordinates to a dict
-    coordinates = set()
+    coordinates = []
     max_x = max_y = 0
-    for coordinate in data:
+    for coordinate_id, coordinate in enumerate(data):
         x, y = map(int, get_coordinate_set(coordinate))
-        coordinates.add((x, y))
+        coordinates.append((x, y, coordinate_id))
+        max_x = max(max_x, x)
+        max_y = max(max_y, y)
 
     infinite_coordinates = set()
     size = defaultdict(int)
@@ -36,9 +38,9 @@ def part1():
     for x in range(0, max_x + 1):
         for y in range(0, max_y + 1):
             min_dist = []
-            for i, (x1,y1) in coordinates:
+            for (x1, y1, coordinate_id) in coordinates:
                 distance = abs(x1 - x) + abs(y1 - y)
-                min_dist.append((distance, i))
+                min_dist.append((distance, coordinate_id))
 
             min_dist = sorted(min_dist)
 
@@ -48,7 +50,9 @@ def part1():
                 if x == 0 or y == 0 or x == max_x or y == max_y:
                     infinite_coordinates.add((x, y))
 
-    return None
+    return max(size for coord_id, size in size.items() if coord_id not in infinite_coordinates)
+
+    # return None
 
 
 def get_coordinate_set(coordiante):
